@@ -1,16 +1,33 @@
-
 const central_image = document.getElementById("central_image");
 const description = document.getElementById("description");
+const container = document.getElementById("container");
+const descriptionContainer = document.getElementById("descriptionContainer");
 
-// set the dimensions and margins of the graph
-var width = 650;
-var height = 650;
-var margin = 40;
+const viewportHeight = window.innerHeight;
+const viewportWidth = window.innerWidth;
+
+// const isMobile = viewportWidth < 640; // 640 is the width `sm` in tailwind
+const isMobile = viewportWidth < viewportHeight;
+
+// set the dimensions of the graph
+const graphSize = Math.min(viewportHeight, viewportWidth) * 0.8;
+var width = graphSize;
+var height = graphSize;
 var ring_width = 25;
 
-// The radius of the pieplot is half the width or half the height (smallest one). I subtract a bit of margin.
-var radius = Math.min(width, height) / 2 - margin;
+// The radius of the pieplot is half the width or half the height (smallest one)
+var radius = Math.min(width, height) / 2;
 const colors = ["#FFFFFF", "#FFD4D4", "#FFFAC9", "#C4C4C4", "#000"];
+
+const smallestRingWidth = radius - 5 * ring_width;
+const bufferBetweenRingsAndPicture = graphSize < 500 ? ring_width : 2 * ring_width;
+const pictureRadius = smallestRingWidth - bufferBetweenRingsAndPicture;
+central_image.width = pictureRadius * 2;
+central_image.height = pictureRadius * 2;
+
+container.style.gridTemplateColumns = !isMobile ? "1fr " + (graphSize + ring_width) + "px 1fr" : null;
+description.style.height = !isMobile ? "66.6666666667%" : null;
+descriptionContainer.style.height = !isMobile ? "100%" : null;
 
 // set the color scale
 var color = (x, data_dict) => {
@@ -34,14 +51,14 @@ const data_2020 = {
 };
 
 var data_ready_2020 = pie(d3.entries(data_2020));
- 
+
 // append the svg object to the div called 'circle_d3_graph'
 var svg_2020_donut = d3
     .select("#circle_d3_graph")
     .append("svg")
     .attr("width", width)
     .attr("height", height)
-	.attr("id", "id3")
+    .attr("id", "id3")
     .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
@@ -63,31 +80,28 @@ svg_2020_donut
     .attr("stroke", "white")
     .style("stroke-width", "2px")
     .style("opacity", (d) => (color(d.data.key, data_2020) === colors[0] ? 0 : 1));
-	
-
 
 svg_2020_donut
     .selectAll("h")
     .data(data_ready_2020)
     .enter()
     .append("text")
-    .text((d) => (d.data.key === "gap" ? "2020" : (d.data.key === "start_here" ? "start here" : null)))
+    .text((d) => (d.data.key === "gap" ? "2020" : d.data.key === "start_here" ? "start here" : null))
     .attr("text-anchor", "middle")
     .attr("transform", function (d) {
         return "rotate(" + (((d.startAngle + d.endAngle) / 2) * 180) / Math.PI + ") translate(0," + (ring_width - radius - 5) + ")";
     });
-	
-	
+
 // 2021 donuts
 
-radius = radius - (ring_width * 2)
+radius = radius - ring_width * 2;
 
 var svg_2021_main_donut = d3
     .select("#id3")
     .append("svg")
     .attr("width", width)
     .attr("height", height)
-	.attr("id","outerPie")
+    .attr("id", "outerPie")
     .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
@@ -97,13 +111,29 @@ var svg_2021_main_donut = d3
 // type data = {}
 const data_2021 = {
     gap: { width: 0.6, color: 0 },
-    jan: { width: 1, color: 1, description: "Learned plasmid design on Benchling to bioengineer ocean-cleaning medusoids (jellyfish + rat hybrids)" },
+    jan: {
+        width: 1,
+        color: 1,
+        description: "Learned plasmid design on Benchling to bioengineer ocean-cleaning medusoids (jellyfish + rat hybrids)",
+    },
     feb: { width: 1, color: 1, description: "Pitched a VR platform for high schoolers to improve understanding of biological phenomena by 77%" },
-    mar: { width: 1, color: 1, description: "Worked with the UN to design a global teleworking platform to increase employment for women in Mexico" },
-    apr: { width: 1, color: 1, description: "Co-designed a cell-computer interface to monitor biomarkers in the blood for early detection of cancer"},
+    mar: {
+        width: 1,
+        color: 1,
+        description: "Worked with the UN to design a global teleworking platform to increase employment for women in Mexico",
+    },
+    apr: {
+        width: 1,
+        color: 1,
+        description: "Co-designed a cell-computer interface to monitor biomarkers in the blood for early detection of cancer",
+    },
     may_jun: { width: 2, color: 1, description: "Used evolutionary algorithms to evolve xenobots to clear plaque from arteries" },
     jul: { width: 1, color: 1, description: "Consulted for BenchSci on how to use their platform to XLR8 and refine clinical trial design" },
-    aug: { width: 1, color: 1, description: "Proposed an acquisition of EdgeQ by Renesas for an end-to-end 5G connectivity solution for the mass market" },
+    aug: {
+        width: 1,
+        color: 1,
+        description: "Proposed an acquisition of EdgeQ by Renesas for an end-to-end 5G connectivity solution for the mass market",
+    },
     sep: { width: 1, color: 0, description: "" },
     oct: { width: 1, color: 1, description: "Researching the biological basis of intelligence and optimization tactics with Dragon’s Vault" },
     nov: { width: 1, color: 0, description: "" },
@@ -114,7 +144,11 @@ const data_2021_2 = {
     jan: { width: 1, color: 0 },
     feb: { width: 1, color: 2, description: "Performed a CRISPR-Cas9 experiment at home + made a youtube video documenting it!" },
     mar: { width: 1, color: 0 },
-    apr_sep: { width: 6, color: 2, description: "Proposed a genetic edit to and gene editing method for Azotobacter vinalandii to create a better biofertilizer with TKS iGEM" },
+    apr_sep: {
+        width: 6,
+        color: 2,
+        description: "Proposed a genetic edit to and gene editing method for Azotobacter vinalandii to create a better biofertilizer with TKS iGEM",
+    },
     oct: { width: 1, color: 0 },
     nov: { width: 1, color: 0 },
     dec: { width: 1, color: 0 },
@@ -164,7 +198,7 @@ var svg_2021_2nd_donut = d3
     .append("svg")
     .attr("width", width)
     .attr("height", height)
-	.attr("id", "id2")
+    .attr("id", "id2")
     .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
@@ -188,30 +222,30 @@ svg_2021_2nd_donut
     .style("opacity", (d) => (color(d.data.key, data_2021_2) === colors[0] ? 0 : 1))
     .attr("id", (d) => d.data.key + "_21_2");
 
-
-const datasets = [{data: data_2021, id: "21"}, {data: data_2021_2, id: "21_2"}]
+const datasets = [
+    { data: data_2021, id: "21" },
+    { data: data_2021_2, id: "21_2" },
+];
 
 for (const dataset of datasets) {
-	for (const key of Object.keys(dataset.data)) {
-		let data = dataset.data[key];
-		if (data.color !== 0) {
-			d3.select("#" + key + "_" + dataset.id)
-				.on("mouseover", function () {
-					console.log("mouse OVER");
-					central_image.src = "./imgs/" + dataset.id + "_" + key + ".png";
-					central_image.alt = "Picture of " + data.description;
-					description.style.visibility = "visible";
-					description.innerHTML = data.description;
-				})
-				.on("mouseout", function () {
-					central_image.src = "./imgs/amy_headshot.png";
-					central_image.alt = "Amy Li headshot";
-					console.log("mouse out");
-					description.innerHTML = "";
-					description.style.visibility = "hidden";
-				});
-		}
-	}
+    for (const key of Object.keys(dataset.data)) {
+        let data = dataset.data[key];
+        if (data.color !== 0) {
+            d3.select("#" + key + "_" + dataset.id)
+                .on("mouseover", function () {
+                    central_image.src = "./imgs/" + dataset.id + "_" + key + ".png";
+                    central_image.alt = "Picture of " + data.description;
+                    description.style.visibility = "visible";
+                    description.innerHTML = data.description;
+                })
+                .on("mouseout", function () {
+                    central_image.src = "./imgs/amy_headshot.png";
+                    central_image.alt = "Amy Li headshot";
+                    description.innerHTML = "";
+                    description.style.visibility = "hidden";
+                });
+        }
+    }
 }
 // 2022 donut
 const data_2022 = {
@@ -221,13 +255,13 @@ const data_2022 = {
 
 var data_ready_2022 = pie(d3.entries(data_2022));
 
-radius = radius - (ring_width * 2) 
+radius = radius - ring_width * 2;
 var svg_2022_donut = d3
     .select("#outerPie")
     .append("svg")
     .attr("width", width)
     .attr("height", height)
-	.attr("id", "id4")
+    .attr("id", "id4")
     .append("g")
     .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
 
@@ -249,7 +283,6 @@ svg_2022_donut
     .attr("stroke", "white")
     .style("stroke-width", "2px")
     .style("opacity", (d) => (color(d.data.key, data_2022) === colors[0] ? 0 : 1));
-
 
 svg_2022_donut
     .selectAll("h")
