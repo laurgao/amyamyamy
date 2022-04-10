@@ -8,3 +8,18 @@ body {
 .title-serif {
     font-family: 'DM Serif Display', serif;
 }
+
+.pie-section {
+    /* The following properties are from the tailwind `transition` class */
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 150ms;
+}
+
+.pie-section:hover {
+    transform: scale(0.98);
+}
+
+.pie-section:hover::after {
+    opacity: 0.5;
+}
