@@ -17,16 +17,18 @@
             <div>Socials</div>
         </div>
         <div>
-            <div class="w-full h-full flex items-center justify-center absolute inset-0">
+            <div class="w-full h-full flex flex-col items-center justify-center absolute inset-0">
+                <!-- Pathetic placeholder div with same height as h1 -->
+                <div style="height: 48px" class="mb-6"></div>
                 <!-- Note that the height & width of the following img is set by the js based on the size of the graph. -->
                 <img src="imgs/amy_headshot.png" alt="Amy Li headshot" id="central_image" class="rounded-full"/>
             </div>
-            <div class="w-full h-full flex items-center justify-center absolute inset-0">
+            <div class="w-full h-full flex flex-col items-center justify-center absolute inset-0">
+                <h1 class="title-serif text-5xl mb-6">Hi I’m Amy!</h1>
                 <!-- The div where the graph will take place -->
                 <div id="circle_d3_graph" style="transform: rotate(-9deg)"></div>
             </div>
         </div>
-		<!-- wip. fixed width, fixed height? not be absolute but always to the right of the graphic. -->
         <div class="flex items-center" id="descriptionContainer">
 		    <div id="description" style="visibility: hidden" class="rounded-md border-2 border-black p-6 m-4"><div>
         </div>

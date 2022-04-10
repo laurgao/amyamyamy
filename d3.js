@@ -8,9 +8,10 @@ const viewportWidth = window.innerWidth;
 
 // const isMobile = viewportWidth < 640; // 640 is the width `sm` in tailwind
 const isMobile = viewportWidth < viewportHeight;
+const titleHeight = 48;
 
 // set the dimensions of the graph
-const graphSize = Math.min(viewportHeight, viewportWidth) * 0.8;
+const graphSize = Math.min(viewportHeight - titleHeight, viewportWidth) * 0.8;
 var width = graphSize;
 var height = graphSize;
 var ring_width = 25;
